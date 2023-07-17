@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Airdrop is Ownable {
     uint256 public fee;
 
-    constructor(uint256 initFree) {
-        fee = initFree;
+    constructor(uint256 initFee) {
+        fee = initFee;
     }
 
     function airdrop(
@@ -20,11 +20,10 @@ contract Airdrop is Ownable {
         require(msg.value == fee, "Insufficient fee");
 
         for (uint256 i = 0; i < _recipients.length; i++) {
-            IERC20(_tokenAddress).transferFrom(
-                msg.sender,
-                _recipients[i],
-                _quantities[i]
-            );
+            require(IERC20(_tokenAddress).balanceOf(msg.sender) >= _quantities[i], "Insufficient balance");
+            require(IERC20(_tokenAddress).allowance(msg.sender, address(this)) >= _quantities[i], "Insufficient allowance");
+
+            IERC20(_tokenAddress).transferFrom(msg.sender, _recipients[i], _quantities[i]);
         }
     }
 
