@@ -1,10 +1,10 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const [owner, feesReceiver] = await ethers.getSigners();
+  const [owner] = await ethers.getSigners();
 
   let fees = ethers.parseEther("0.00001");
-  const airdrop = await ethers.deployContract("Airdrop", [fees, feesReceiver]);
+  const airdrop = await ethers.deployContract("Airdrop", [fees, owner.address]);
 
   await airdrop.waitForDeployment();
 
